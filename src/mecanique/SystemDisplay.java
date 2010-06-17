@@ -255,7 +255,7 @@ public class SystemDisplay extends JPanel
         ArrayList<ObjectPlacement> type_selectors = new ArrayList<ObjectPlacement>();
 
         type_selectors.add(new Ball.Placement(panneau));
-//        type_selectors.add(new RubberBand.Placement(panneau));
+        type_selectors.add(new RubberBand.Placement(panneau));
         type_selectors.add(new BlackHole.Placement(panneau));
         type_selectors.add(new Stick.Placement(panneau));
 
