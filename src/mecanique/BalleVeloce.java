@@ -1,13 +1,11 @@
 package mecanique;
 
 import java.awt.Color;
-//import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
-import javax.swing.SwingUtilities;
 
 public class BalleVeloce extends Ball {
     private boolean showVelocity = false;
