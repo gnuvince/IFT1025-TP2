@@ -8,10 +8,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 public class Ball implements Drawable, PhysicalObject {
-    private Point2D position;
-    private Point2D velocity;
-    private final static int DIAMETER = 10;
-    private final static int MASS = 1;
+    protected Point2D position;
+    protected Point2D velocity;
+    protected final static int DIAMETER = 10;
+    protected final static int MASS = 1;
     
     protected Ball(double x, double y) {
         position = new Point2D.Double(x, y);
