@@ -1,5 +1,6 @@
 package mecanique;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,10 +19,19 @@ public class RubberBand implements Drawable, Force {
         left_object = l;
         right_object = r;
     }
+    
+    private double getX1() { return left_object.getPosition().getX(); }
+    private double getY1() { return left_object.getPosition().getY(); }
+    private double getX2() { return right_object.getPosition().getX(); }
+    private double getY2() { return right_object.getPosition().getY(); }
        
     @Override
     public void draw(Graphics2D G) {
         Graphics2D g2 = (Graphics2D) G.create();
+        if (distance() > LENGTH)
+            g2.setColor(Color.RED);
+        else
+            g2.setColor(Color.BLACK);
         g2.drawLine(
                 (int) left_object.getPosition().getX(),
                 (int) left_object.getPosition().getY(),
@@ -29,10 +39,37 @@ public class RubberBand implements Drawable, Force {
                 (int) right_object.getPosition().getY()
                );
     }
+    
+    private double distance() {
+        double a = getX1() - getX2();
+        double b = getY1() - getY2();
+        return Math.sqrt(a*a + b*b);
+    }
 
     @Override
     public Point2D getAcceleration(PhysicalObject object) {
-        return new Point2D.Double();
+        double d = distance();
+        double f;
+        if (d <= LENGTH) {
+            f = 0;
+        }
+        else {
+            f = RIGOR * (d - LENGTH);
+        }
+        double theta = Math.atan2(getY2() - getY1(), getX2() - getX1());
+        
+        if (object == left_object) {
+            return new Point2D.Double(
+                    f * Math.cos(theta),
+                    f * Math.sin(theta)
+            );
+        }
+        else {
+            return new Point2D.Double(
+                    -f * Math.cos(theta),
+                    -f * Math.sin(theta)
+            );
+        }
     }
 
 
