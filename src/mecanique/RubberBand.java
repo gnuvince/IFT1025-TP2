@@ -9,21 +9,39 @@ import java.awt.geom.Point2D;
 import javax.swing.SwingUtilities;
 
 public class RubberBand implements Drawable, Force {
-    private static final double LENGTH = 100.0;
-    private static final double RIGOR = 0.1;
+    protected static final double LENGTH = 100.0;
+    protected static final double RIGOR = 0.1;
     
-    private PhysicalObject left_object = null;
-    private PhysicalObject right_object = null;
+    protected PhysicalObject left_object = null;
+    protected PhysicalObject right_object = null;
+    
+    // La position temporaire de la deuxième extrémité de l'élastique
+    protected Point2D position = null;
     
     public RubberBand(PhysicalObject l, PhysicalObject r) {
         left_object = l;
         right_object = r;
+        position = left_object.getPosition();
     }
     
-    private double getX1() { return left_object.getPosition().getX(); }
-    private double getY1() { return left_object.getPosition().getY(); }
-    private double getX2() { return right_object.getPosition().getX(); }
-    private double getY2() { return right_object.getPosition().getY(); }
+    protected double getX1() { return left_object.getPosition().getX(); }
+    protected double getY1() { return left_object.getPosition().getY(); }
+    
+    // Si le deuxième objet n'est pas encore sélectionné, la position de X2 et
+    // Y2 est la position du curseur de la souris (qui se trouve dans position)
+    protected double getX2() {
+        if (right_object == null)
+            return position.getX();
+        else 
+            return right_object.getPosition().getX();
+    }
+    protected double getY2() {
+        if (right_object == null)
+            return position.getY();
+        else 
+            return right_object.getPosition().getY();
+    }
+    
        
     @Override
     public void draw(Graphics2D G) {
@@ -32,15 +50,10 @@ public class RubberBand implements Drawable, Force {
             g2.setColor(Color.RED);
         else
             g2.setColor(Color.BLACK);
-        g2.drawLine(
-                (int) left_object.getPosition().getX(),
-                (int) left_object.getPosition().getY(),
-                (int) right_object.getPosition().getX(),
-                (int) right_object.getPosition().getY()
-               );
+        g2.drawLine((int) getX1(), (int) getY1(), (int) getX2(), (int) getY2());
     }
     
-    private double distance() {
+    protected double distance() {
         double a = getX1() - getX2();
         double b = getY1() - getY2();
         return Math.sqrt(a*a + b*b);
@@ -75,8 +88,8 @@ public class RubberBand implements Drawable, Force {
 
 
     public static class Placement extends MouseAdapter implements ObjectPlacement {
-        private SystemDisplay panneau;
-        private RubberBand rb;
+        protected SystemDisplay panneau;
+        protected RubberBand rb;
 
         protected Placement(SystemDisplay panneau) {
             this.panneau = panneau;
@@ -95,10 +108,21 @@ public class RubberBand implements Drawable, Force {
             }
         }
         
-        private PhysicalObject getClosestObject(Point2D position) {
-            PhysicalObject po = panneau.getSystem().closestObject(position.getX(), position.getY());
-            return po;
+        public PhysicalObject getObjectAt(int x, int y) {
+            PhysicalObject po = panneau.getSystem().closestObject(x, y);
+            if (po == null)
+                return null;
+            int poX = (int) po.getPosition().getX();
+            int poY = (int) po.getPosition().getY();
+            
+            // S'assurer qu'on se trouve dans l'enceinte de l'objet.
+            if (x >= poX && x <= poX + po.getWidth() &&
+                y >= poY && y <= poY + po.getHeight())
+                return po;
+            else
+                return null;
         }
+        
         
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -107,9 +131,20 @@ public class RubberBand implements Drawable, Force {
                 clear();
             } 
             else {
-                PhysicalObject po = getClosestObject(e.getPoint());
+                int x = e.getX();
+                int y = e.getY();
+                PhysicalObject po = getObjectAt(x, y);
+                
+                // Si aucun objet physique est sélectionné, créer une boule
+                // et l'ajouter au panneau.
+                if (po == null) {
+                    po = new Ball(x, y);
+                    panneau.add(po);
+                }
+                
+                // Lors du premier clic, créer un objet RubberBand
                 if (rb == null) {
-                    rb = new RubberBand(po, po);
+                    rb = new RubberBand(po, null);
                     panneau.add(rb);
                 } 
                 else {
@@ -117,9 +152,7 @@ public class RubberBand implements Drawable, Force {
                     
                     // Garder l'élastique seulement s'il est attaché à deux objets
                     // différents.
-                    if (rb.left_object == null ||
-                        rb.right_object == null ||
-                        rb.left_object == rb.right_object) {
+                    if (rb.left_object == rb.right_object) {
                         clear();
                     }
                     
@@ -132,8 +165,7 @@ public class RubberBand implements Drawable, Force {
         @Override
         public void mouseMoved(MouseEvent e) {
             if (rb != null) {
-                PhysicalObject po = getClosestObject(e.getPoint());
-                rb.right_object = po;
+                rb.position = e.getPoint();
                 panneau.repaint();
             }
         }
