@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
+import javax.swing.SwingUtilities;
+
 
 public class BalleVeloce extends Ball {
     private boolean showVelocity = false;
@@ -40,23 +42,34 @@ public class BalleVeloce extends Ball {
             return "Balle véloce";
         }
         
-        public void clear() {}
+        public void clear() {
+            if (bv != null) {
+                panneau.remove(bv);
+                bv = null;
+                panneau.repaint();
+            }
+        }
         
         @Override
         public void mouseClicked(MouseEvent e) {
-            int x = e.getX();
-            int y = e.getY();
-            if (bv == null) {
-                bv = new BalleVeloce(x, y, new Point2D.Double());
-                bv.showVelocity = true;
-                panneau.add(bv);
+            if (SwingUtilities.isRightMouseButton(e)) {
+                clear();
             }
             else {
-                bv.setVelocity(computeInitialVelocity(x, y));
-                bv.showVelocity = false;
-                bv = null;
+                int x = e.getX();
+                int y = e.getY();
+                if (bv == null) {
+                    bv = new BalleVeloce(x, y, new Point2D.Double());
+                    bv.showVelocity = true;
+                    panneau.add(bv);
+                }
+                else {
+                    bv.setVelocity(computeInitialVelocity(x, y));
+                    bv.showVelocity = false;
+                    bv = null;
+                }
+                panneau.repaint();
             }
-            panneau.repaint();
         }
         
         @Override
