@@ -42,14 +42,21 @@ public class RubberBand implements Drawable, Force {
             return right_object.getPosition().getY();
     }
     
+    protected Color getTenseColor() {
+        return Color.RED;
+    }
+    
+    protected Color getNormalColor() {
+        return Color.BLACK;
+    }
        
     @Override
     public void draw(Graphics2D G) {
         Graphics2D g2 = (Graphics2D) G.create();
         if (distance() > LENGTH)
-            g2.setColor(Color.RED);
+            g2.setColor(getTenseColor());
         else
-            g2.setColor(Color.BLACK);
+            g2.setColor(getNormalColor());
         g2.drawLine((int) getX1(), (int) getY1(), (int) getX2(), (int) getY2());
     }
     
@@ -109,6 +116,11 @@ public class RubberBand implements Drawable, Force {
         }
         
         
+        protected RubberBand getInstance(PhysicalObject left_po) {
+            return new RubberBand(left_po, null);
+        }
+        
+        
         @Override
         public void mouseClicked(MouseEvent e) {
             // verifier le bouton du souris
@@ -129,7 +141,7 @@ public class RubberBand implements Drawable, Force {
                 
                 // Lors du premier clic, créer un objet RubberBand
                 if (rb == null) {
-                    rb = new RubberBand(po, null);
+                    rb = getInstance(po);
                     panneau.add(rb);
                 } 
                 else {
