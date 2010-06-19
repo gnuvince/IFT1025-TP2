@@ -62,27 +62,14 @@ public class RubberBand implements Drawable, Force {
     @Override
     public Point2D getAcceleration(PhysicalObject object) {
         double d = distance();
-        double f;
-        if (d <= LENGTH) {
-            f = 0;
-        }
-        else {
-            f = RIGOR * (d - LENGTH);
-        }
+        double f = d < LENGTH ? 0 : RIGOR * (d - LENGTH);
         double theta = Math.atan2(getY2() - getY1(), getX2() - getX1());
+        int direction = object == left_object ? 1 : -1;
         
-        if (object == left_object) {
-            return new Point2D.Double(
-                    f * Math.cos(theta),
-                    f * Math.sin(theta)
-            );
-        }
-        else {
-            return new Point2D.Double(
-                    -f * Math.cos(theta),
-                    -f * Math.sin(theta)
-            );
-        }
+        return new Point2D.Double(
+            direction * f * Math.cos(theta),
+            direction * f * Math.sin(theta)
+        );
     }
 
 
@@ -101,11 +88,9 @@ public class RubberBand implements Drawable, Force {
         }
         
         public void clear() {
-            if (rb != null) {
-                panneau.remove(rb);
-                rb = null;
-                panneau.repaint();
-            }
+            panneau.remove(rb);
+            rb = null;
+            panneau.repaint();
         }
         
         public PhysicalObject getObjectAt(int x, int y) {
