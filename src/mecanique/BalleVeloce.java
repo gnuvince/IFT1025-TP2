@@ -24,9 +24,7 @@ public class BalleVeloce extends Ball {
         int dxdt = x + (int)velocity.getX();
         int dydt = y + (int)velocity.getY(); 
         g.fillOval(x, y, DIAMETER, DIAMETER);
-        if (showVelocity) {
-            g.drawLine(x + DIAMETER/2, y + DIAMETER/2, dxdt, dydt);
-        }
+        g.drawLine(x + DIAMETER/2, y + DIAMETER/2, dxdt, dydt);
     }
     
     
