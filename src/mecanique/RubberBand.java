@@ -69,7 +69,7 @@ public class RubberBand implements Drawable, Force {
     @Override
     public Point2D getAcceleration(PhysicalObject object) {
         double d = distance();
-        double f = d < LENGTH ? 0 : RIGOR * (d - LENGTH);
+        double f = d < LENGTH ? 0 : Math.abs(RIGOR * (d - LENGTH));
         double theta = Math.atan2(getY2() - getY1(), getX2() - getX1());
         int direction = object == left_object ? 1 : -1;
         

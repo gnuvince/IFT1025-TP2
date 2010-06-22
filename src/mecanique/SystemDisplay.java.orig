@@ -260,9 +260,13 @@ public class SystemDisplay extends JPanel
         type_selectors.add(new BlackHole.Placement(panneau));
         type_selectors.add(new Stick.Placement(panneau));
         type_selectors.add(new BalleVeloce.Placement(panneau));
-        type_selectors.add(new Peg.Placement(panneau));
+<<<<<<< HEAD
+        type_selectors.add(new Spring.Placement(panneau));
         type_selectors.add(new Horloge.Placement(panneau));
 
+=======
+        type_selectors.add(new Peg.Placement(panneau));
+>>>>>>> a15b05deb2f747c7cdd67b423cb98b60c113a79a
 
         return type_selectors;
     }
