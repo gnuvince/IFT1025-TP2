@@ -27,8 +27,15 @@ public class Spring extends RubberBand {
         double d = distance();
         double f = Math.abs(RIGOR * (d - LENGTH));
         double theta = Math.atan2(getY2() - getY1(), getX2() - getX1());
-        int direction = object == left_object ? 1 : -1;
         int invert = d < LENGTH ? -1 : 1;
+        int direction;
+        if (object == left_object)
+            direction = 1;
+        else if (object == right_object)
+            direction = -1;
+        // Ignorer les objets qui ne sont pas attachés à l'élastique
+        else 
+            direction = 0;
         
         return new Point2D.Double(
             invert * direction * f * Math.cos(theta),
