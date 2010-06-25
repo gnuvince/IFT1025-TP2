@@ -4,13 +4,20 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 
 
+/**
+ * Classe implémentant un ressort.  Un ressort est une sous-classe de RubberBand
+ * où le calcul de l'accélération est différent.
+ */
 public class Spring extends RubberBand {
+    // Le ressort a une rigueur plus élevé que l'élastique
     protected static final double RIGOR = 0.8666;
     
     public Spring(PhysicalObject l, PhysicalObject r) {
         super(l, r);
     }
     
+    // Utiliser des couleurs différentes pour qu'un ressort soit visuellement
+    // distinct d'un élastique.
     @Override
     protected Color getTenseColor() {
         return Color.PINK;
@@ -22,6 +29,9 @@ public class Spring extends RubberBand {
     }
     
     
+    /**
+     * Calcul de l'accélération en utilisant la formule donnée dans l'énoncé.
+     */
     @Override
     public Point2D getAcceleration(PhysicalObject object) {
         double d = distance();
@@ -44,11 +54,18 @@ public class Spring extends RubberBand {
     }
     
     
+    /**
+     * Classe servant à placer un ressort.
+     */
     public static class Placement extends RubberBand.Placement {
         protected Placement(SystemDisplay panneau) {
             super(panneau);
         }
         
+        
+        /**
+         * Retourne une instance d'un ressort où le premier objet est fixé.
+         */
         @Override
         protected RubberBand getInstance(PhysicalObject left_po) {
             return new Spring(left_po, null);
